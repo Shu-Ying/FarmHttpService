@@ -1,0 +1,11 @@
+release/CHandle.o
+release/CHandleManager.o
+release/CJsonParse.o
+release/CModelManager.o
+release/CHttpService.o
+release/CServiceManager.o
+release/CUiManager.o
+release/Widget.o
+release/main.o
+release/moc_CHttpService.o
+release/moc_Widget.o
