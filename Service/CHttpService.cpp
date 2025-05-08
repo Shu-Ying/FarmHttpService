@@ -75,4 +75,17 @@ void CHttpService::initService()
                     {
                         return m_pHandle->getHandle()->processVersionPost(req);
                     });
+
+    m_pServer.route("/sign_in", QHttpServerRequest::Method::Post, [this](const QHttpServerRequest &req)
+                    {
+                        if(!m_pHandle->getHandle()->checkToken(req))
+                            return QHttpServerResponse{ QHttpServerResponse::StatusCode::Unauthorized };
+
+                        return m_pHandle->getHandle()->processSignInPost(req);
+                    });
+
+    m_pServer.route("/sign_in", QHttpServerRequest::Method::Get,[this](const QHttpServerRequest &req)
+                    {
+                        return m_pHandle->getHandle()->processSignInGet(req);
+                    });
 }
