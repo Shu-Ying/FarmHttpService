@@ -60,6 +60,7 @@ QHttpServerResponse CHandle::processSignInGet(const QHttpServerRequest &req)
 
     qDebug()<< filePath;
 
+
     return QHttpServerResponse::fromFile(filePath);
 }
 
@@ -86,3 +87,4 @@ QHttpServerResponse CHandle::processSignInPost(const QHttpServerRequest &req)
         return QHttpServerResponse("false");
     }
 }
+
