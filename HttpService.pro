@@ -13,6 +13,7 @@ SOURCES += \
   Handle/CHandleManager.cpp \
   Model/CJsonParse.cpp \
   Model/CModelManager.cpp \
+  Model/CModelTool.cpp \
   Service/CHttpService.cpp \
   Service/CServiceManager.cpp \
   Ui/CUiManager.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
   Handle/CHandleManager.h \
   Model/CJsonParse.h \
   Model/CModelManager.h \
+  Model/CModelTool.h \
   Service/CHttpService.h \
   Service/CServiceManager.h \
   Ui/CUiManager.h \

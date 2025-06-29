@@ -88,3 +88,12 @@ QHttpServerResponse CHandle::processSignInPost(const QHttpServerRequest &req)
     }
 }
 
+QHttpServerResponse CHandle::processPlantVersionGet()
+{
+    QString filePath = QCoreApplication::applicationDirPath() + "/json/plant/version.json";
+
+    qDebug() << filePath;
+
+    return QHttpServerResponse::fromFile(filePath);
+}
+

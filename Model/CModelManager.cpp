@@ -1,6 +1,7 @@
 #include "CModelManager.h"
 
 #include "CJsonParse.h"
+#include "CModelTool.h"
 
 using namespace NS_HttpService;
 
@@ -26,9 +27,21 @@ CJsonParse *CModelManager::getJsonParse()
     return m_pJsonParse;
 }
 
+CModelTool *CModelManager::getModelTool()
+{
+    if(m_pModelTool == nullptr)
+    {
+        m_pModelTool = new CModelTool();
+    }
+
+    return m_pModelTool;
+}
+
 CModelManager::CModelManager()
 {
     m_pJsonParse = nullptr;
+
+    m_pModelTool = nullptr;
 }
 
 

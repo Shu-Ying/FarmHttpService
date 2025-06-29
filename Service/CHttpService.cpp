@@ -1,7 +1,14 @@
 #include "CHttpService.h"
 
+#include <QDir>
+#include <QFile>
+#include <QApplication>
+
 #include "Handle/CHandle.h"
 #include "Handle/CHandleManager.h"
+
+#include "Model/CModelTool.h"
+#include "Model/CModelManager.h"
 
 using namespace NS_HttpService;
 
@@ -73,7 +80,18 @@ void CHttpService::initService()
 
     m_pServer.route("/version", QHttpServerRequest::Method::Post, [this](const QHttpServerRequest &req)
                     {
+                        if(!m_pHandle->getHandle()->checkToken(req))
+                            return QHttpServerResponse{ QHttpServerResponse::StatusCode::Unauthorized };
+
                         return m_pHandle->getHandle()->processVersionPost(req);
+                    });
+
+    m_pServer.route("/sign_in", QHttpServerRequest::Method::Get,[this](const QHttpServerRequest &req)
+                    {
+                        if(!m_pHandle->getHandle()->checkToken(req))
+                            return QHttpServerResponse{ QHttpServerResponse::StatusCode::Unauthorized };
+
+                        return m_pHandle->getHandle()->processSignInGet(req);
                     });
 
     m_pServer.route("/sign_in", QHttpServerRequest::Method::Post, [this](const QHttpServerRequest &req)
@@ -84,8 +102,48 @@ void CHttpService::initService()
                         return m_pHandle->getHandle()->processSignInPost(req);
                     });
 
-    m_pServer.route("/sign_in", QHttpServerRequest::Method::Get,[this](const QHttpServerRequest &req)
+    m_pServer.route("/plant_version", QHttpServerRequest::Method::Get,[this](const QHttpServerRequest &req)
                     {
-                        return m_pHandle->getHandle()->processSignInGet(req);
+                        if(!m_pHandle->getHandle()->checkToken(req))
+                            return QHttpServerResponse{ QHttpServerResponse::StatusCode::Unauthorized };
+
+                        return m_pHandle->getHandle()->processPlantVersionGet();
+                    });
+
+
+    m_pServer.setMissingHandler(this, [this](const QHttpServerRequest &req, QHttpServerResponder &responder)
+                    {
+                        if (!m_pHandle->getHandle()->checkToken(req))
+                        {
+                            responder.write(QHttpServerResponder::StatusCode::Unauthorized);
+                            return;
+                        }
+
+                        const auto urlPath = req.url().path();
+                        if (!urlPath.startsWith("/file/"))
+                        {
+                            responder.write(QHttpServerResponder::StatusCode::NotFound);
+                            return;
+                        }
+
+                        auto tool = CModelManager::getInstance()->getModelTool();
+
+                        QString fullPath = QString("%1%2").arg(QCoreApplication::applicationDirPath(),
+                                                                     urlPath);
+                        QFile f(fullPath);
+                        if (!f.open(QIODevice::ReadOnly))
+                        {
+                            responder.write(QHttpServerResponder::StatusCode::NotFound);
+                            return;
+                        }
+
+                        qDebug()<<fullPath;
+
+                        QByteArray data = f.readAll();
+                        QByteArray mime = tool->guessMimeType(fullPath).toUtf8();
+
+                        responder.write(data, mime);
+
+                        return;
                     });
 }

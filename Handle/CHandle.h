@@ -40,6 +40,8 @@ public:
      */
     QHttpServerResponse processSignInPost(const QHttpServerRequest &req);
 
+    QHttpServerResponse processPlantVersionGet();
+
 private:
     QString             m_sToken;      //Tokne 秘钥
 };
